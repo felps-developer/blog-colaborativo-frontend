@@ -2,26 +2,26 @@
 
 @layer base {
   :root {
-    /* Cores baseadas no site O POVO - Azul marinho/escuro como primária */
+    /* Cores baseadas no site O POVO - Azul escuro característico */
     --background: 0 0% 100%;
-    --foreground: 220 13% 18%;
+    --foreground: 220 15% 20%;
     --card: 0 0% 100%;
-    --card-foreground: 220 13% 18%;
+    --card-foreground: 220 15% 20%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 18%;
-    --primary: 214 84% 35%;
+    --popover-foreground: 220 15% 20%;
+    --primary: 210 100% 25%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 13% 96%;
-    --secondary-foreground: 220 13% 18%;
-    --muted: 220 10% 96%;
-    --muted-foreground: 220 9% 46%;
-    --accent: 214 84% 45%;
+    --secondary: 220 13% 97%;
+    --secondary-foreground: 220 15% 20%;
+    --muted: 220 10% 97%;
+    --muted-foreground: 220 9% 45%;
+    --accent: 210 100% 35%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 90%;
-    --input: 220 13% 90%;
-    --ring: 214 84% 35%;
+    --border: 220 13% 92%;
+    --input: 220 13% 92%;
+    --ring: 210 100% 25%;
     --radius: 0.5rem;
   }
 

@@ -41,8 +41,7 @@ export default function AuthLayout({
   }, [mounted, router, authResource, setUser, setToken, isAuthenticated]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0052A5]/5 via-white to-gray-50">
       <div className="w-full max-w-md p-6 relative z-10">
         {children}
       </div>

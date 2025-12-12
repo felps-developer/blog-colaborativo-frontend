@@ -6,6 +6,7 @@ import { usePostsResource } from '@/hooks/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { PostDialog } from '@/components/posts/PostDialog';
 import type { PostListItem } from '@/types/posts';
 import { Plus, FileText, Calendar, User } from 'lucide-react';
 import MainLayout from '@/components/layouts/MainLayout';
@@ -17,6 +18,7 @@ export default function PostsPage() {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     loadPosts();
@@ -36,6 +38,10 @@ export default function PostsPage() {
     }
   };
 
+  const handleDialogSuccess = () => {
+    loadPosts();
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -48,20 +54,15 @@ export default function PostsPage() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="space-y-8">
+        {/* Header da Página */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 pb-6 border-b border-gray-200">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Posts</h1>
-            <p className="text-muted-foreground mt-1.5">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">Posts</h1>
+            <p className="text-gray-600 text-base">
               Listagem de todos os posts disponíveis
             </p>
           </div>
-          <Link href="/posts/new">
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Post
-            </Button>
-          </Link>
         </div>
 
         {error && (
@@ -71,15 +72,25 @@ export default function PostsPage() {
         )}
 
         {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Carregando posts...</p>
+          <div className="text-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#0052A5] border-t-transparent mx-auto"></div>
+            <p className="mt-6 text-gray-600 font-medium">Carregando posts...</p>
           </div>
         ) : posts.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">Nenhum post encontrado</p>
+          <Card className="border-2 border-dashed border-gray-200 bg-gray-50">
+            <CardContent className="py-20 text-center">
+              <div className="bg-[#0052A5]/10 rounded-full p-4 w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+                <FileText className="h-10 w-10 text-[#0052A5]" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhum post encontrado</h3>
+              <p className="text-gray-600 mb-6">Comece criando seu primeiro post!</p>
+              <Button 
+                onClick={() => setDialogOpen(true)}
+                className="bg-[#0052A5] hover:bg-[#003d7a] text-white font-semibold"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Criar Primeiro Post
+              </Button>
             </CardContent>
           </Card>
         ) : (
@@ -87,17 +98,19 @@ export default function PostsPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {posts.map((post) => (
                 <Link key={post.id} href={`/posts/${post.id}`}>
-                  <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer h-full border-border hover:border-primary/50 group">
+                  <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer h-full border-gray-200 hover:border-[#0052A5]/30 bg-white group overflow-hidden">
                     <CardHeader className="pb-4">
-                      <CardTitle className="line-clamp-2 text-lg group-hover:text-primary transition-colors">
+                      <CardTitle className="line-clamp-2 text-xl font-bold text-gray-900 group-hover:text-[#0052A5] transition-colors mb-3 leading-tight">
                         {post.title}
                       </CardTitle>
-                      <CardDescription className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-3 text-sm">
-                        <span className="flex items-center gap-1.5">
-                          <User className="h-3.5 w-3.5" />
+                      <CardDescription className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-100">
+                        <span className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="bg-[#0052A5]/10 rounded-full p-1.5">
+                            <User className="h-3.5 w-3.5 text-[#0052A5]" />
+                          </div>
                           <span className="font-medium">{post.author.name}</span>
                         </span>
-                        <span className="flex items-center gap-1.5">
+                        <span className="flex items-center gap-2 text-sm text-gray-500">
                           <Calendar className="h-3.5 w-3.5" />
                           {formatDate(post.created_at)}
                         </span>
@@ -109,21 +122,31 @@ export default function PostsPage() {
             </div>
 
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-4 pt-8 border-t border-gray-200">
                 <Button
                   variant="outline"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                 >
                   Anterior
                 </Button>
-                <span className="text-sm text-muted-foreground">
-                  Página {page} de {totalPages}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-700">
+                    Página
+                  </span>
+                  <span className="px-3 py-1 bg-[#0052A5] text-white rounded-md font-semibold text-sm">
+                    {page}
+                  </span>
+                  <span className="text-sm font-medium text-gray-700">
+                    de {totalPages}
+                  </span>
+                </div>
                 <Button
                   variant="outline"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                 >
                   Próxima
                 </Button>
@@ -131,6 +154,25 @@ export default function PostsPage() {
             )}
           </>
         )}
+
+        {/* Botão Flutuante para Criar Post */}
+        <div className="fixed bottom-8 right-8 z-50">
+          <Button
+            onClick={() => setDialogOpen(true)}
+            size="lg"
+            className="bg-[#0052A5] hover:bg-[#003d7a] text-white font-semibold shadow-lg hover:shadow-xl transition-all rounded-full h-14 w-14 p-0"
+            title="Criar novo post"
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
+        </div>
+
+        {/* Dialog de Criar/Editar Post */}
+        <PostDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          onSuccess={handleDialogSuccess}
+        />
       </div>
     </MainLayout>
   );

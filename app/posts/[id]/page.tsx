@@ -7,6 +7,7 @@ import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { PostDialog } from '@/components/posts/PostDialog';
 import type { Post } from '@/types/posts';
 import { Calendar, User, Edit, Trash2, ArrowLeft } from 'lucide-react';
 import MainLayout from '@/components/layouts/MainLayout';
@@ -20,6 +21,7 @@ export default function PostDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     if (params.id) {
@@ -56,6 +58,10 @@ export default function PostDetailPage() {
     }
   };
 
+  const handleDialogSuccess = () => {
+    loadPost();
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -71,7 +77,11 @@ export default function PostDetailPage() {
   return (
     <MainLayout>
       <div className="max-w-4xl mx-auto space-y-6">
-        <Button variant="ghost" onClick={() => router.push('/posts')}>
+        <Button 
+          variant="ghost" 
+          onClick={() => router.push('/posts')}
+          className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+        >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Voltar
         </Button>
@@ -83,22 +93,24 @@ export default function PostDetailPage() {
         )}
 
         {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Carregando post...</p>
+          <div className="text-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#0052A5] border-t-transparent mx-auto"></div>
+            <p className="mt-6 text-gray-600 font-medium">Carregando post...</p>
           </div>
         ) : post ? (
-          <Card className="shadow-lg border-border">
-            <CardHeader className="pb-4 border-b">
+          <Card className="shadow-xl border border-gray-200 bg-white">
+            <CardHeader className="pb-6 border-b border-gray-200">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div className="flex-1">
-                  <CardTitle className="text-3xl mb-3 text-foreground leading-tight">{post.title}</CardTitle>
-                  <CardDescription className="flex flex-wrap items-center gap-4 text-sm">
-                    <span className="flex items-center gap-1.5">
-                      <User className="h-4 w-4" />
-                      <span className="font-medium">{post.author.name}</span>
+                  <CardTitle className="text-4xl mb-4 text-gray-900 leading-tight font-bold">{post.title}</CardTitle>
+                  <CardDescription className="flex flex-wrap items-center gap-4 text-sm pt-2">
+                    <span className="flex items-center gap-2 text-gray-600">
+                      <div className="bg-[#0052A5]/10 rounded-full p-1.5">
+                        <User className="h-4 w-4 text-[#0052A5]" />
+                      </div>
+                      <span className="font-semibold text-gray-700">{post.author.name}</span>
                     </span>
-                    <span className="flex items-center gap-1.5">
+                    <span className="flex items-center gap-2 text-gray-500">
                       <Calendar className="h-4 w-4" />
                       {formatDate(post.created_at)}
                     </span>
@@ -109,8 +121,8 @@ export default function PostDetailPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => router.push(`/posts/${post.id}/edit`)}
-                      className="hover:bg-primary hover:text-primary-foreground"
+                      onClick={() => setDialogOpen(true)}
+                      className="border-gray-300 text-gray-700 hover:bg-[#0052A5] hover:text-white hover:border-[#0052A5]"
                     >
                       <Edit className="h-4 w-4 mr-2" />
                       Editar
@@ -128,12 +140,11 @@ export default function PostDetailPage() {
                 )}
               </div>
             </CardHeader>
-            <CardContent className="pt-6">
-              <div className="prose prose-lg max-w-none">
-                <p className="whitespace-pre-wrap text-foreground leading-relaxed text-base">
-                  {post.content}
-                </p>
-              </div>
+            <CardContent className="pt-8">
+              <div 
+                className="prose prose-lg max-w-none"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
             </CardContent>
           </Card>
         ) : (
@@ -142,6 +153,16 @@ export default function PostDetailPage() {
               <p className="text-muted-foreground">Post não encontrado</p>
             </CardContent>
           </Card>
+        )}
+
+        {/* Dialog de Editar Post */}
+        {post && (
+          <PostDialog
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+            post={post}
+            onSuccess={handleDialogSuccess}
+          />
         )}
       </div>
     </MainLayout>

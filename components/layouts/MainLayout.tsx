@@ -56,62 +56,55 @@ export default function MainLayout({
 
   if (!mounted || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Carregando...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#0052A5] border-t-transparent mx-auto"></div>
+          <p className="mt-4 text-gray-600 font-medium">Carregando...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-white shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link href="/posts" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="bg-primary p-2 rounded-lg">
-                <FileText className="h-5 w-5 text-primary-foreground" />
+            {/* Logo */}
+            <Link href="/posts" className="flex items-center gap-3 group">
+              <div className="bg-[#0052A5] p-2 rounded-lg group-hover:bg-[#003d7a] transition-colors">
+                <FileText className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-foreground">Blog Colaborativo</span>
+              <span className="text-2xl font-bold text-[#0052A5] tracking-tight">Blog Colaborativo</span>
             </Link>
-            <nav className="hidden md:flex items-center gap-2">
-              <Link href="/posts">
-                <Button 
-                  variant={pathname === '/posts' ? 'default' : 'ghost'}
-                  className={pathname === '/posts' ? 'bg-primary text-primary-foreground' : ''}
-                >
-                  Posts
-                </Button>
-              </Link>
-              <Link href="/posts/new">
-                <Button 
-                  variant="default" 
-                  size="sm"
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Novo Post
-                </Button>
-              </Link>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted border border-border">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium text-foreground">{user?.name}</span>
+
+            {/* Navegação Desktop */}
+            <nav className="hidden md:flex items-center gap-1">
+              {/* Separador */}
+              <div className="h-8 w-px bg-gray-300 mx-2" />
+              
+              {/* Usuário */}
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200">
+                <div className="bg-[#0052A5] rounded-full p-1.5">
+                  <User className="h-3.5 w-3.5 text-white" />
+                </div>
+                <span className="text-sm font-medium text-gray-700">{user?.name}</span>
               </div>
+              
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={handleLogout}
-                className="hover:bg-muted"
+                className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Sair
               </Button>
             </nav>
-            {/* Menu mobile */}
+
+            {/* Menu Mobile */}
             <div className="md:hidden">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="text-gray-700">
                 <span className="sr-only">Menu</span>
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -121,7 +114,7 @@ export default function MainLayout({
           </div>
         </div>
       </header>
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>
     </div>
