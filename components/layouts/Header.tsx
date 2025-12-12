@@ -31,18 +31,6 @@ export function Header() {
 
           {/* Navegação Desktop */}
           <nav className="hidden md:flex items-center gap-1">
-            <Link href="/posts">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className={cn(
-                  "text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium",
-                  pathname === '/posts' && "bg-gray-100 text-gray-900"
-                )}
-              >
-                Todos os Posts
-              </Button>
-            </Link>
             <Link href="/posts/my-posts">
               <Button 
                 variant="ghost" 
