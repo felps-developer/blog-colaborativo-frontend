@@ -49,15 +49,15 @@ export default function PostsPage() {
   return (
     <MainLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold">Posts</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-3xl font-bold text-foreground">Posts</h1>
+            <p className="text-muted-foreground mt-1.5">
               Listagem de todos os posts disponíveis
             </p>
           </div>
           <Link href="/posts/new">
-            <Button>
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
               <Plus className="h-4 w-4 mr-2" />
               Novo Post
             </Button>
@@ -84,19 +84,21 @@ export default function PostsPage() {
           </Card>
         ) : (
           <>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {posts.map((post) => (
                 <Link key={post.id} href={`/posts/${post.id}`}>
-                  <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-                    <CardHeader>
-                      <CardTitle className="line-clamp-2">{post.title}</CardTitle>
-                      <CardDescription className="flex items-center gap-4 mt-2">
-                        <span className="flex items-center gap-1">
-                          <User className="h-3 w-3" />
-                          {post.author.name}
+                  <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer h-full border-border hover:border-primary/50 group">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="line-clamp-2 text-lg group-hover:text-primary transition-colors">
+                        {post.title}
+                      </CardTitle>
+                      <CardDescription className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-3 text-sm">
+                        <span className="flex items-center gap-1.5">
+                          <User className="h-3.5 w-3.5" />
+                          <span className="font-medium">{post.author.name}</span>
                         </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
+                        <span className="flex items-center gap-1.5">
+                          <Calendar className="h-3.5 w-3.5" />
                           {formatDate(post.created_at)}
                         </span>
                       </CardDescription>

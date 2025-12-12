@@ -88,17 +88,17 @@ export default function PostDetailPage() {
             <p className="mt-4 text-muted-foreground">Carregando post...</p>
           </div>
         ) : post ? (
-          <Card>
-            <CardHeader>
-              <div className="flex items-start justify-between">
+          <Card className="shadow-lg border-border">
+            <CardHeader className="pb-4 border-b">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div className="flex-1">
-                  <CardTitle className="text-3xl mb-2">{post.title}</CardTitle>
-                  <CardDescription className="flex items-center gap-4">
-                    <span className="flex items-center gap-1">
+                  <CardTitle className="text-3xl mb-3 text-foreground leading-tight">{post.title}</CardTitle>
+                  <CardDescription className="flex flex-wrap items-center gap-4 text-sm">
+                    <span className="flex items-center gap-1.5">
                       <User className="h-4 w-4" />
-                      {post.author.name}
+                      <span className="font-medium">{post.author.name}</span>
                     </span>
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1.5">
                       <Calendar className="h-4 w-4" />
                       {formatDate(post.created_at)}
                     </span>
@@ -110,6 +110,7 @@ export default function PostDetailPage() {
                       variant="outline"
                       size="sm"
                       onClick={() => router.push(`/posts/${post.id}/edit`)}
+                      className="hover:bg-primary hover:text-primary-foreground"
                     >
                       <Edit className="h-4 w-4 mr-2" />
                       Editar
@@ -127,9 +128,11 @@ export default function PostDetailPage() {
                 )}
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="prose max-w-none">
-                <p className="whitespace-pre-wrap text-foreground">{post.content}</p>
+            <CardContent className="pt-6">
+              <div className="prose prose-lg max-w-none">
+                <p className="whitespace-pre-wrap text-foreground leading-relaxed text-base">
+                  {post.content}
+                </p>
               </div>
             </CardContent>
           </Card>

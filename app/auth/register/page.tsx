@@ -50,10 +50,15 @@ export default function RegisterPage() {
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-2xl text-center">Criar Conta</CardTitle>
-        <CardDescription className="text-center">
+    <Card className="w-full shadow-xl border-0 shadow-primary/10">
+      <CardHeader className="space-y-3 pb-6">
+        <div className="flex justify-center mb-2">
+          <div className="bg-primary p-3 rounded-xl">
+            <User className="h-8 w-8 text-primary-foreground" />
+          </div>
+        </div>
+        <CardTitle className="text-3xl text-center font-bold text-foreground">Criar Conta</CardTitle>
+        <CardDescription className="text-center text-base">
           Crie sua conta para começar a publicar posts
         </CardDescription>
       </CardHeader>
@@ -121,7 +126,11 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button 
+            type="submit" 
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-11" 
+            disabled={loading}
+          >
             {loading ? 'Criando conta...' : 'Criar Conta'}
           </Button>
 

@@ -67,36 +67,61 @@ export default function MainLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/posts" className="flex items-center gap-2">
-            <FileText className="h-6 w-6" />
-            <span className="text-xl font-bold">Blog Colaborativo</span>
-          </Link>
-          <nav className="flex items-center gap-4">
-            <Link href="/posts">
-              <Button variant={pathname === '/posts' ? 'default' : 'ghost'}>
-                Posts
-              </Button>
+      <header className="border-b bg-white shadow-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/posts" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <div className="bg-primary p-2 rounded-lg">
+                <FileText className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <span className="text-xl font-bold text-foreground">Blog Colaborativo</span>
             </Link>
-            <Link href="/posts/new">
-              <Button variant="default" size="sm">
-                <Plus className="h-4 w-4 mr-2" />
-                Novo Post
+            <nav className="hidden md:flex items-center gap-2">
+              <Link href="/posts">
+                <Button 
+                  variant={pathname === '/posts' ? 'default' : 'ghost'}
+                  className={pathname === '/posts' ? 'bg-primary text-primary-foreground' : ''}
+                >
+                  Posts
+                </Button>
+              </Link>
+              <Link href="/posts/new">
+                <Button 
+                  variant="default" 
+                  size="sm"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Post
+                </Button>
+              </Link>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted border border-border">
+                <User className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-foreground">{user?.name}</span>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleLogout}
+                className="hover:bg-muted"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sair
               </Button>
-            </Link>
-            <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-muted">
-              <User className="h-4 w-4" />
-              <span className="text-sm">{user?.name}</span>
+            </nav>
+            {/* Menu mobile */}
+            <div className="md:hidden">
+              <Button variant="ghost" size="sm">
+                <span className="sr-only">Menu</span>
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </Button>
             </div>
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sair
-            </Button>
-          </nav>
+          </div>
         </div>
       </header>
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">
         {children}
       </main>
     </div>

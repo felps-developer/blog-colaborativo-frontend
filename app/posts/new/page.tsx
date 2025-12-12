@@ -48,10 +48,10 @@ export default function NewPostPage() {
           Voltar
         </Button>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Criar Novo Post</CardTitle>
-            <CardDescription>
+        <Card className="shadow-lg border-border">
+          <CardHeader className="pb-4 border-b">
+            <CardTitle className="text-2xl">Criar Novo Post</CardTitle>
+            <CardDescription className="text-base mt-1">
               Preencha os campos abaixo para criar um novo post
             </CardDescription>
           </CardHeader>
@@ -87,14 +87,19 @@ export default function NewPostPage() {
                 />
               </div>
 
-              <div className="flex gap-2">
-                <Button type="submit" disabled={loading}>
+              <div className="flex gap-3 pt-2">
+                <Button 
+                  type="submit" 
+                  disabled={loading}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                >
                   {loading ? 'Criando...' : 'Criar Post'}
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => router.push('/posts')}
+                  className="hover:bg-muted"
                 >
                   Cancelar
                 </Button>

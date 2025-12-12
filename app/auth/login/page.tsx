@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, FileText } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -48,10 +48,15 @@ export default function LoginPage() {
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-2xl text-center">Blog Colaborativo</CardTitle>
-        <CardDescription className="text-center">
+    <Card className="w-full shadow-xl border-0 shadow-primary/10">
+      <CardHeader className="space-y-3 pb-6">
+        <div className="flex justify-center mb-2">
+          <div className="bg-primary p-3 rounded-xl">
+            <FileText className="h-8 w-8 text-primary-foreground" />
+          </div>
+        </div>
+        <CardTitle className="text-3xl text-center font-bold text-foreground">Blog Colaborativo</CardTitle>
+        <CardDescription className="text-center text-base">
           Bem-vindo, utilize seu acesso para continuar.
         </CardDescription>
       </CardHeader>
@@ -102,7 +107,11 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button 
+            type="submit" 
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-11" 
+            disabled={loading}
+          >
             {loading ? 'Entrando...' : 'Entrar'}
           </Button>
 
