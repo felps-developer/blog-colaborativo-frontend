@@ -12,7 +12,7 @@ import { getErrorMessage, type ApiError } from '@/types/errors';
 import type { Post } from '@/types/posts';
 import { Calendar, User, Edit, Trash2, ArrowLeft } from 'lucide-react';
 import MainLayout from '@/components/layouts/MainLayout';
-import { formatDate, confirmDeletePost } from '@/utils';
+import { formatDate, confirmDeletePost, extractHtmlFromJson } from '@/utils';
 
 export default function PostDetailPage() {
   const params = useParams();
@@ -147,7 +147,7 @@ export default function PostDetailPage() {
             <CardContent className="pt-8">
               <div 
                 className="prose prose-lg max-w-none"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: extractHtmlFromJson(post.content) }}
               />
             </CardContent>
           </Card>

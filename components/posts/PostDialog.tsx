@@ -18,6 +18,7 @@ import { RichEditor } from '@/components/editor/RichEditor';
 import { useToast } from '@/hooks/use-toast';
 import { getErrorMessage, type ApiError } from '@/types/errors';
 import type { Post } from '@/types/posts';
+import { convertHtmlToJson, extractHtmlFromJson } from '@/utils/content';
 
 interface PostDialogProps {
   open: boolean;
@@ -41,7 +42,8 @@ export function PostDialog({ open, onOpenChange, post, onSuccess }: PostDialogPr
     if (open) {
       if (post) {
         setTitle(post.title);
-        setContent(post.content);
+        // Extrai o HTML do formato JSON do backend
+        setContent(extractHtmlFromJson(post.content));
       } else {
         setTitle('');
         setContent('');
@@ -54,14 +56,17 @@ export function PostDialog({ open, onOpenChange, post, onSuccess }: PostDialogPr
     setLoading(true);
 
     try {
+      // Converte o HTML para o formato JSON esperado pelo backend
+      const contentJson = convertHtmlToJson(content);
+
       if (isEditing && post) {
-        await postsResource.updatePost(post.id, { title, content });
+        await postsResource.updatePost(post.id, { title, content: contentJson });
         toast({
           title: 'Post atualizado',
           description: 'O post foi atualizado com sucesso.',
         });
       } else {
-        await postsResource.createPost({ title, content });
+        await postsResource.createPost({ title, content: contentJson });
         toast({
           title: 'Post criado',
           description: 'O post foi criado com sucesso.',

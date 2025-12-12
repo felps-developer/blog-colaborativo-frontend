@@ -4,4 +4,5 @@
 export * from './date';
 export * from './debounce';
 export * from './confirm';
+export * from './content';
 

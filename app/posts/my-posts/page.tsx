@@ -28,6 +28,55 @@ export default function MyPostsPage() {
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const loadPosts = async () => {
+      try {
+        setLoading(true);
+        const response = await postsResource.listPosts({ 
+          page, 
+          per_page: 10,
+          author_id: user.id 
+        });
+        setPosts(response.data.data);
+        setTotalPages(response.data.last_page);
+      } catch (err) {
+        const error = err as ApiError;
+        toast({
+          variant: 'destructive',
+          title: 'Erro ao carregar posts',
+          description: getErrorMessage(error),
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, user?.id]);
+
+  const handleCreateClick = () => {
+    setEditingPost(null);
+    setDialogOpen(true);
+  };
+
+  const handleEditClick = async (postId: number) => {
+    try {
+      const response = await postsResource.getPost(postId);
+      setEditingPost(response.data);
+      setDialogOpen(true);
+    } catch (err) {
+      const error = err as ApiError;
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao carregar post',
+        description: getErrorMessage(error),
+      });
+    }
+  };
+
   const loadPosts = useCallback(async () => {
     if (!user?.id) return;
 
@@ -50,33 +99,8 @@ export default function MyPostsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, user?.id, postsResource, toast]);
-
-  useEffect(() => {
-    if (user?.id) {
-      loadPosts();
-    }
-  }, [loadPosts, user?.id]);
-
-  const handleCreateClick = () => {
-    setEditingPost(null);
-    setDialogOpen(true);
-  };
-
-  const handleEditClick = async (postId: number) => {
-    try {
-      const response = await postsResource.getPost(postId);
-      setEditingPost(response.data);
-      setDialogOpen(true);
-    } catch (err) {
-      const error = err as ApiError;
-      toast({
-        variant: 'destructive',
-        title: 'Erro ao carregar post',
-        description: getErrorMessage(error),
-      });
-    }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, user?.id]);
 
   const handleDeleteClick = async (postId: number) => {
     const confirmed = await confirmDeletePost();

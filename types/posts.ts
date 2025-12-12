@@ -33,11 +33,11 @@ export interface PostsListResponse {
 
 export interface CreatePostData {
   title: string;
-  content: string;
+  content: { version: string; content: string };
 }
 
 export interface UpdatePostData {
   title?: string;
-  content?: string;
+  content?: { version: string; content: string };
 }
 
