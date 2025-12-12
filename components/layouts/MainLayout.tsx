@@ -4,7 +4,10 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth';
 import { useAuthResource } from '@/hooks/api';
+import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage, type ApiError } from '@/types/errors';
 import { Header } from './Header';
+
 
 export default function MainLayout({
   children,
@@ -14,6 +17,7 @@ export default function MainLayout({
   const router = useRouter();
   const { isAuthenticated, setUser, setToken } = useAuthStore();
   const authResource = useAuthResource();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
   const hasLoadedRef = useRef(false);
@@ -41,7 +45,13 @@ export default function MainLayout({
           setUser(response.data);
           setToken(token);
         } catch (error) {
+          const apiError = error as ApiError;
           router.push('/auth/login');
+          toast({
+            variant: 'destructive',
+            title: 'Erro ao carregar perfil',
+            description: getErrorMessage(apiError),
+          });
         }
       }
       setLoading(false);

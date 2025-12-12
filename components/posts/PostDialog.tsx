@@ -14,8 +14,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { RichEditor } from '@/components/editor/RichEditor';
+import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage, type ApiError } from '@/types/errors';
 import type { Post } from '@/types/posts';
 
 interface PostDialogProps {
@@ -28,10 +29,10 @@ interface PostDialogProps {
 export function PostDialog({ open, onOpenChange, post, onSuccess }: PostDialogProps) {
   const postsResource = usePostsResource();
   const { user } = useAuthStore();
+  const { toast } = useToast();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const isEditing = !!post;
   const isAuthor = post && user && post.author.id === user.id;
@@ -45,30 +46,36 @@ export function PostDialog({ open, onOpenChange, post, onSuccess }: PostDialogPr
         setTitle('');
         setContent('');
       }
-      setError(null);
     }
   }, [open, post]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     try {
       if (isEditing && post) {
         await postsResource.updatePost(post.id, { title, content });
+        toast({
+          title: 'Post atualizado',
+          description: 'O post foi atualizado com sucesso.',
+        });
       } else {
         await postsResource.createPost({ title, content });
+        toast({
+          title: 'Post criado',
+          description: 'O post foi criado com sucesso.',
+        });
       }
       onOpenChange(false);
       onSuccess?.();
-    } catch (err: any) {
-      const errorMessage =
-        err.response?.data?.message ||
-        err.response?.data?.errors?.title?.[0] ||
-        err.response?.data?.errors?.content?.[0] ||
-        `Erro ao ${isEditing ? 'atualizar' : 'criar'} post. Tente novamente.`;
-      setError(errorMessage);
+    } catch (err) {
+      const error = err as ApiError;
+      toast({
+        variant: 'destructive',
+        title: `Erro ao ${isEditing ? 'atualizar' : 'criar'} post`,
+        description: getErrorMessage(error),
+      });
     } finally {
       setLoading(false);
     }
@@ -90,12 +97,6 @@ export function PostDialog({ open, onOpenChange, post, onSuccess }: PostDialogPr
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
           <div className="space-y-2">
             <Label htmlFor="title" className="text-base font-semibold">Título</Label>
             <Input

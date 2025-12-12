@@ -1,13 +1,15 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { LogOut, User, FileText } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export function Header() {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, logout } = useAuthStore();
 
   const handleLogout = () => {
@@ -29,6 +31,31 @@ export function Header() {
 
           {/* Navegação Desktop */}
           <nav className="hidden md:flex items-center gap-1">
+            <Link href="/posts">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className={cn(
+                  "text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium",
+                  pathname === '/posts' && "bg-gray-100 text-gray-900"
+                )}
+              >
+                Todos os Posts
+              </Button>
+            </Link>
+            <Link href="/posts/my-posts">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className={cn(
+                  "text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium",
+                  pathname === '/posts/my-posts' && "bg-gray-100 text-gray-900"
+                )}
+              >
+                Meus Posts
+              </Button>
+            </Link>
+            
             {/* Separador */}
             <div className="h-8 w-px bg-gray-300 mx-2" />
             

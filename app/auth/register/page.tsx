@@ -9,24 +9,23 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage, type ApiError } from '@/types/errors';
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
-import { AxiosError } from 'axios';
 
 export default function RegisterPage() {
   const router = useRouter();
   const authResource = useAuthResource();
   const { setUser, setToken } = useAuthStore();
+  const { toast } = useToast();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     try {
@@ -37,11 +36,19 @@ export default function RegisterPage() {
       const profileResponse = await authResource.getProfile();
       setUser(profileResponse.data);
       
+      toast({
+        title: 'Conta criada',
+        description: 'Sua conta foi criada com sucesso!',
+      });
+      
       router.push('/posts');
     } catch (err) {
-      console.error(err);
-      const errorMessage = err instanceof AxiosError ? err.response?.data?.message : 'Erro ao criar conta. Tente novamente.';
-      setError(errorMessage);
+      const error = err as ApiError;
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao criar conta',
+        description: getErrorMessage(error),
+      });
     } finally {
       setLoading(false);
     }
@@ -62,12 +69,6 @@ export default function RegisterPage() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-          
           <div className="space-y-2">
             <Label htmlFor="name">Nome</Label>
             <div className="relative">

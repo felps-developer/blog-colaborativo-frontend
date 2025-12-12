@@ -9,22 +9,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage, type ApiError } from '@/types/errors';
 import { Mail, Lock, Eye, EyeOff, FileText } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
   const authResource = useAuthResource();
   const { setUser, setToken } = useAuthStore();
+  const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     try {
@@ -35,13 +35,19 @@ export default function LoginPage() {
       const profileResponse = await authResource.getProfile();
       setUser(profileResponse.data);
       
+      toast({
+        title: 'Login realizado',
+        description: 'Bem-vindo de volta!',
+      });
+      
       router.push('/posts');
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message || 
-        err.response?.data?.errors?.email?.[0] ||
-        'Erro ao fazer login. Verifique suas credenciais.'
-      );
+    } catch (err) {
+      const error = err as ApiError;
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao fazer login',
+        description: getErrorMessage(error),
+      });
     } finally {
       setLoading(false);
     }
@@ -62,12 +68,6 @@ export default function LoginPage() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-          
           <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
             <div className="relative">

@@ -6,20 +6,22 @@ import { usePostsResource } from '@/hooks/api';
 import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { PostDialog } from '@/components/posts/PostDialog';
+import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage, type ApiError } from '@/types/errors';
 import type { Post } from '@/types/posts';
 import { Calendar, User, Edit, Trash2, ArrowLeft } from 'lucide-react';
 import MainLayout from '@/components/layouts/MainLayout';
+import { formatDate, confirmDeletePost } from '@/utils';
 
 export default function PostDetailPage() {
   const params = useParams();
   const router = useRouter();
   const postsResource = usePostsResource();
   const { user } = useAuthStore();
+  const { toast } = useToast();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -32,27 +34,45 @@ export default function PostDetailPage() {
   const loadPost = async () => {
     try {
       setLoading(true);
-      setError(null);
       const response = await postsResource.getPost(params.id as string);
       setPost(response.data);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao carregar post');
+    } catch (err) {
+      const error = err as ApiError;
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao carregar post',
+        description: getErrorMessage(error),
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!post || !confirm('Tem certeza que deseja excluir este post?')) {
+    if (!post) {
+      return;
+    }
+    
+    const confirmed = await confirmDeletePost();
+    if (!confirmed) {
       return;
     }
 
     try {
       setDeleting(true);
       await postsResource.deletePost(post.id);
+      toast({
+        title: 'Post excluído',
+        description: 'O post foi excluído com sucesso.',
+      });
       router.push('/posts');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao excluir post');
+    } catch (err) {
+      const error = err as ApiError;
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao excluir post',
+        description: getErrorMessage(error),
+      });
     } finally {
       setDeleting(false);
     }
@@ -60,16 +80,6 @@ export default function PostDetailPage() {
 
   const handleDialogSuccess = () => {
     loadPost();
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
   };
 
   const isAuthor = post && user && post.author.id === user.id;
@@ -85,12 +95,6 @@ export default function PostDetailPage() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Voltar
         </Button>
-
-        {error && (
-          <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
 
         {loading ? (
           <div className="text-center py-20">
