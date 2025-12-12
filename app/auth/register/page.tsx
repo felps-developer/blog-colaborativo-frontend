@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { AxiosError } from 'axios';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -37,12 +38,9 @@ export default function RegisterPage() {
       setUser(profileResponse.data);
       
       router.push('/posts');
-    } catch (err: any) {
-      const errorMessage = 
-        err.response?.data?.message || 
-        err.response?.data?.errors?.email?.[0] ||
-        err.response?.data?.errors?.password?.[0] ||
-        'Erro ao criar conta. Tente novamente.';
+    } catch (err) {
+      console.error(err);
+      const errorMessage = err instanceof AxiosError ? err.response?.data?.message : 'Erro ao criar conta. Tente novamente.';
       setError(errorMessage);
     } finally {
       setLoading(false);
