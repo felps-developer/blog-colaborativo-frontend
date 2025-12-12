@@ -20,10 +20,20 @@ import {
   AlignJustify,
   Image as ImageIcon,
   Undo,
-  Redo
+  Redo,
+  Type
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import { FontFamily } from './extensions/FontFamily';
+import { FontSize } from './extensions/FontSize';
 import './RichEditor.css';
 
 interface RichEditorProps {
@@ -39,6 +49,8 @@ export function RichEditor({ content, onChange, placeholder = 'Comece a escrever
     immediatelyRender: false,
     extensions: [
       StarterKit,
+      FontFamily,
+      FontSize,
       Underline,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
@@ -103,6 +115,71 @@ export function RichEditor({ content, onChange, placeholder = 'Comece a escrever
     <div className="border border-gray-300 rounded-lg overflow-hidden bg-white">
       {/* Toolbar */}
       <div className="flex items-center gap-1 p-2 bg-gray-50 border-b border-gray-200 flex-wrap">
+        {/* Tipo de Fonte */}
+        <Select
+          value={
+            editor.getAttributes('textStyle').fontFamily || 'default'
+          }
+          onValueChange={(value) => {
+            if (value === 'default') {
+              editor.chain().focus().unsetFontFamily().run();
+            } else {
+              editor.chain().focus().setFontFamily(value).run();
+            }
+          }}
+        >
+          <SelectTrigger className="h-8 w-[140px] text-xs">
+            <Type className="h-3.5 w-3.5 mr-1.5" />
+            <SelectValue placeholder="Fonte" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="default">Padrão</SelectItem>
+            <SelectItem value="Arial">Arial</SelectItem>
+            <SelectItem value="Georgia">Georgia</SelectItem>
+            <SelectItem value="Times New Roman">Times New Roman</SelectItem>
+            <SelectItem value="Verdana">Verdana</SelectItem>
+            <SelectItem value="Courier New">Courier New</SelectItem>
+            <SelectItem value="Comic Sans MS">Comic Sans MS</SelectItem>
+            <SelectItem value="Impact">Impact</SelectItem>
+            <SelectItem value="Trebuchet MS">Trebuchet MS</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Tamanho da Fonte */}
+        <Select
+          value={
+            editor.getAttributes('textStyle').fontSize || 'default'
+          }
+          onValueChange={(value) => {
+            if (value === 'default') {
+              editor.chain().focus().unsetFontSize().run();
+            } else {
+              editor.chain().focus().setFontSize(value).run();
+            }
+          }}
+        >
+          <SelectTrigger className="h-8 w-[100px] text-xs">
+            <SelectValue placeholder="Tamanho" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="default">Padrão</SelectItem>
+            <SelectItem value="8">8px</SelectItem>
+            <SelectItem value="10">10px</SelectItem>
+            <SelectItem value="12">12px</SelectItem>
+            <SelectItem value="14">14px</SelectItem>
+            <SelectItem value="16">16px</SelectItem>
+            <SelectItem value="18">18px</SelectItem>
+            <SelectItem value="20">20px</SelectItem>
+            <SelectItem value="24">24px</SelectItem>
+            <SelectItem value="28">28px</SelectItem>
+            <SelectItem value="32">32px</SelectItem>
+            <SelectItem value="36">36px</SelectItem>
+            <SelectItem value="48">48px</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <div className="w-px h-6 bg-gray-300 mx-1" />
+
         <Button
           type="button"
           variant="ghost"
